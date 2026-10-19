@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101014">
+<title>ClipDrop — TikTok Media</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{--bg:#101014;--panel:rgba(25,25,33,.88);--text:#f7f7fb;--muted:#9999aa;--line:rgba(255,255,255,.10);--pink:#ff4d8d;--cyan:#66e6df}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--text);background:var(--bg);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+.glow{position:fixed;width:340px;height:340px;border-radius:50%;filter:blur(120px);opacity:.17;pointer-events:none}
+.glow-one{background:var(--pink);top:4%;left:-170px}.glow-two{background:#615cff;right:-180px;bottom:5%}
+.shell{position:relative;z-index:1;max-width:1000px;padding:28px 24px 20px;margin:auto;min-height:100vh;display:flex;flex-direction:column}
+.nav{display:flex;align-items:center;justify-content:space-between}
+.brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font:700 23px 'Space Grotesk',sans-serif;letter-spacing:-.8px}
+.brand-mark{display:grid;place-items:center;width:34px;height:34px;color:#111116;background:linear-gradient(135deg,var(--cyan),#9bf5d0);border-radius:11px;font-size:25px}
+.brand-accent{color:var(--cyan)}
+.nav-pill{display:flex;align-items:center;gap:8px;color:#c5c5d0;border:1px solid var(--line);background:rgba(255,255,255,.035);border-radius:30px;padding:9px 13px;font-size:12px}
+.live-dot{width:7px;height:7px;background:var(--cyan);border-radius:50%;box-shadow:0 0 12px var(--cyan)}
+.hero{text-align:center;margin:70px auto 0;width:100%;max-width:650px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--cyan);font-size:11px;letter-spacing:2px;font-weight:700}
+h1{font:700 clamp(42px,7vw,68px)/1.08 'Space Grotesk',sans-serif;letter-spacing:-3px;margin:18px 0 14px}
+h1 span{background:linear-gradient(90deg,var(--cyan),#a9f5d9);-webkit-background-clip:text;background-clip:text;color:transparent}
+.subtitle{margin:0 auto;max-width:450px;color:var(--muted);font-size:15px;line-height:1.7}
+.download-card{margin-top:35px;text-align:left;padding:25px;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:var(--panel);box-shadow:0 24px 80px rgba(0,0,0,.28);backdrop-filter:blur(16px)}
+label,.format-heading{display:flex;justify-content:space-between;color:#e9e9f0;font-size:13px;font-weight:600;margin-bottom:11px}
+.url-box{display:flex;align-items:center;gap:11px;padding:6px 7px 6px 14px;border:1px solid #383844;border-radius:12px;background:#131319;transition:border-color .2s}
+.url-box:focus-within{border-color:var(--cyan)}
+.link-icon{color:var(--cyan);font-size:18px}
+input{width:100%;min-width:0;color:var(--text);background:transparent;border:0;outline:0;font:13px 'DM Sans',sans-serif}
+input::placeholder{color:#666675}
+.paste-btn{flex-shrink:0;padding:9px 12px;color:#d9d9e2;background:#292932;border:0;border-radius:8px;font-weight:600;cursor:pointer}
+.paste-btn:hover{background:#383844}
+.error{min-height:0;margin:0;color:#ff8ba6;font-size:12px}
+.error:not(:empty){margin-top:8px}
+.format-heading{margin-top:24px;margin-bottom:12px}
+.format-hint{color:#777786;font-size:11px;font-weight:400}
+.formats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.format-option{display:flex;align-items:center;gap:11px;padding:14px;color:var(--text);text-align:left;border:1px solid #383844;background:#191920;border-radius:13px;cursor:pointer;transition:.2s ease}
+.format-option:hover{border-color:#777786;transform:translateY(-1px)}
+.format-option.selected{border-color:var(--cyan);background:rgba(102,230,223,.07);box-shadow:inset 0 0 0 1px rgba(102,230,223,.08)}
+.format-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;font-size:17px}
+.video-icon{color:#ff85b1;background:rgba(255,77,141,.12)}
+.audio-icon{color:var(--cyan);background:rgba(102,230,223,.12);font-size:23px}
+.format-copy{display:flex;flex:1;flex-direction:column;gap:4px}
+.format-copy strong{font-size:12px}.format-copy small{color:var(--muted);font-size:11px}
+.radio-dot{width:15px;height:15px;border:1px solid #60606e;border-radius:50%}
+.selected .radio-dot{border:4px solid var(--cyan)}
+.download-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin-top:20px;padding:15px;color:#101014;border:0;border-radius:12px;background:linear-gradient(100deg,var(--cyan),#a5f4d4);font:700 14px 'DM Sans',sans-serif;cursor:pointer;transition:transform .2s,filter .2s}
+.download-btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.button-arrow{margin-left:auto;font-size:17px}
+.status{display:none;margin-top:14px;padding:12px 13px;border-radius:10px;color:#d8f8f5;background:rgba(102,230,223,.08);border:1px solid rgba(102,230,223,.16);font-size:12px;line-height:1.6}
+.status.visible{display:block}
+.disclaimer{margin:14px 0 0;color:#777786;text-align:center;font-size:10px;line-height:1.6}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:28px 0 55px;text-align:left}
+.step{display:flex;align-items:flex-start;gap:10px}
+.step>span{color:var(--cyan);font:600 12px 'Space Grotesk',sans-serif;padding-top:2px}
+.step div{display:flex;flex-direction:column;gap:5px}
+.step strong{font-size:11px}.step small{color:var(--muted);font-size:10px;line-height:1.4}
+footer{display:flex;justify-content:space-between;gap:10px;margin-top:auto;padding-top:18px;border-top:1px solid var(--line);color:#777786;font-size:11px}
+footer b{color:var(--cyan)}
+@media(max-width:560px){.shell{padding:20px 15px 16px}.nav-pill{font-size:10px;padding:8px 10px}.hero{margin-top:53px}h1{letter-spacing:-2px}.subtitle{font-size:13px}.download-card{margin-top:27px;padding:17px;border-radius:18px}.formats{grid-template-columns:1fr;gap:9px}.format-option{padding:12px}.steps{gap:9px;margin:24px 0 35px}.step{gap:6px}.step strong{font-size:10px}.step small{font-size:9px}}
+</style>
+</head>
+<body>
+<div class="glow glow-one"></div><div class="glow glow-two"></div>
+<main class="shell">
+  <nav class="nav">
+    <a class="brand" href="#"><span class="brand-mark">↧</span><span>clip<span class="brand-accent">drop</span></span></a>
+    <span class="nav-pill"><span class="live-dot"></span> Simple · Rapide · Clair</span>
+  </nav>
+  <section class="hero">
+    <div class="eyebrow"><span>✦</span> TON CONTENU, TON FORMAT</div>
+    <h1>Un lien. <span>Ton choix.</span></h1>
+    <p class="subtitle">Colle un lien TikTok et choisis le format adapté à ton besoin.</p>
+    <section class="download-card" aria-label="Outil de téléchargement">
+      <label for="tiktok-url">Lien TikTok</label>
+      <div class="url-box"><span class="link-icon">↗</span><input id="tiktok-url" type="url" placeholder="https://www.tiktok.com/@.../video/..." autocomplete="url"><button id="paste-btn" class="paste-btn" type="button">Coller</button></div>
+      <p id="url-error" class="error" role="alert"></p>
+      <div class="format-heading"><span>Choisis ton format</span><span class="format-hint">Sélectionne une option</span></div>
+      <div class="formats">
+        <button class="format-option selected" type="button" data-format="video" aria-pressed="true"><span class="format-icon video-icon">▶</span><span class="format-copy"><strong>Vidéo MP4</strong><small>Image + son</small></span><span class="radio-dot"></span></button>
+        <button class="format-option" type="button" data-format="audio" aria-pressed="false"><span class="format-icon audio-icon">♫</span><span class="format-copy"><strong>Musique MP3</strong><small>Audio uniquement</small></span><span class="radio-dot"></span></button>
+      </div>
+      <button id="download-btn" class="download-btn" type="button"><span id="button-icon">↓</span><span id="button-label">Préparer la vidéo</span><span class="button-arrow">↗</span></button>
+      <div id="status" class="status" aria-live="polite"></div>
+      <p class="disclaimer">Utilise cet outil uniquement pour les contenus que tu possèdes ou que tu es autorisé à télécharger.</p>
+    </section>
+    <div class="steps">
+      <div class="step"><span>01</span><div><strong>Colle le lien</strong><small>Ajoute l’URL de la vidéo</small></div></div>
+      <div class="step"><span>02</span><div><strong>Choisis le format</strong><small>Vidéo ou audio</small></div></div>
+      <div class="step"><span>03</span><div><strong>Lance le traitement</strong><small>Via un service autorisé</small></div></div>
+    </div>
+  </section>
+  <footer><span>© 2026 ClipDrop</span><span>Conçu pour être simple <b>✦</b></span></footer>
+</main>
+<script>
+const urlInput=document.getElementById('tiktok-url');
+const pasteBtn=document.getElementById('paste-btn');
+const formatButtons=[...document.querySelectorAll('.format-option')];
+const downloadBtn=document.getElementById('download-btn');
+const buttonLabel=document.getElementById('button-label');
+const buttonIcon=document.getElementById('button-icon');
+const statusBox=document.getElementById('status');
+const errorBox=document.getElementById('url-error');
+let selectedFormat='video';
+function updateButton(){buttonLabel.textContent=selectedFormat==='video'?'Préparer la vidéo':'Préparer la musique';buttonIcon.textContent=selectedFormat==='video'?'↓':'♫'}
+formatButtons.forEach(button=>button.addEventListener('click',()=>{selectedFormat=button.dataset.format;formatButtons.forEach(item=>{const active=item===button;item.classList.toggle('selected',active);item.setAttribute('aria-pressed',String(active))});updateButton();statusBox.classList.remove('visible')}));
+pasteBtn.addEventListener('click',async()=>{errorBox.textContent='';try{const text=await navigator.clipboard.readText();if(!text){errorBox.textContent='Le presse-papiers est vide.';return}urlInput.value=text.trim();statusBox.classList.remove('visible')}catch{errorBox.textContent='Autorise l’accès au presse-papiers ou colle le lien manuellement.'}});
+function isTikTokUrl(value){try{const parsed=new URL(value);const host=parsed.hostname.toLowerCase().replace(/^www\./,'');return ['tiktok.com','m.tiktok.com','vm.tiktok.com','vt.tiktok.com'].includes(host)||host.endsWith('.tiktok.com')}catch{return false}}
+downloadBtn.addEventListener('click',async()=>{errorBox.textContent='';statusBox.classList.remove('visible');const url=urlInput.value.trim();if(!url){errorBox.textContent='Colle d’abord un lien TikTok.';urlInput.focus();return}if(!isTikTokUrl(url)){errorBox.textContent='Ce lien ne semble pas être une URL TikTok valide.';urlInput.focus();return}downloadBtn.disabled=true;buttonLabel.textContent='Traitement en cours…';buttonIcon.textContent='⏳';statusBox.textContent='Préparation du fichier. Cela peut prendre quelques instants…';statusBox.classList.add('visible');try{const response=await fetch('/api/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,format:selectedFormat})});if(!response.ok){let message='Le téléchargement a échoué.';try{const data=await response.json();if(data.error)message=data.error}catch{}throw new Error(message)}const blob=await response.blob();const disposition=response.headers.get('Content-Disposition')||'';const match=disposition.match(/filename="?([^";]+)"?/i);const filename=match?match[1]:(selectedFormat==='video'?'tiktok-video.mp4':'tiktok-audio.mp3');const objectUrl=URL.createObjectURL(blob);const a=document.createElement('a');a.href=objectUrl;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(objectUrl);statusBox.textContent='Fichier prêt : le téléchargement a démarré.'}catch(error){statusBox.textContent=error.message||'Impossible de joindre le serveur. Vérifie que le backend est démarré.'}finally{downloadBtn.disabled=false;updateButton()}});
+urlInput.addEventListener('input',()=>{errorBox.textContent='';statusBox.classList.remove('visible')});
+</script>
+</body>
+</html>
